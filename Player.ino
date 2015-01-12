@@ -5,107 +5,156 @@ const byte HelicoFace[] PROGMEM = {
 const byte HelicoGauche[] PROGMEM = {
   32,10,0x7F,0xFF,0xFC,0x0,0x0,0x10,0x1,0xC0,0x0,0xFF,0x2,0x20,0x3,0xE3,0xC2,0xA0,0x6,0x47,0xFF,0xE0,0xC,0xFF,0xE2,0xA0,0x1F,0xFE,0x2,0x20,0x3F,0xFC,0x1,0xC0,0x84,0x30,0x0,0x0,0x7F,0xFE,0x0,0x0,};
 
+const byte HelicoCrache[] PROGMEM = {
+  16,24,0x3F,0xFC,0x30,0xE,0xE0,0x6,0xC0,0x3,0x80,0x1,0x80,0x1,0x9E,0x79,0x72,0x4E,0x6,0x60,0xA,0x50,0x12,0x48,0x12,0x48,0xA,0x50,0x7,0xE0,0x2,0x40,0x2,0x40,0x2,0x40,0x2,0x40,0x2,0x40,0x1A,0x58,0x26,0x64,0x42,0x42,0x46,0x62,0x84,0x21,};
+const byte HelicoExplode[] PROGMEM = {
+  24,11,0x88,0x48,0x80,0x44,0x91,0x0,0x23,0xE2,0x0,0x1F,0x3C,0x0,0x88,0x8C,0x0,0x4C,0xDA,0x0,0x2E,0xB9,0x0,0x13,0xF0,0x80,0x23,0xE8,0x0,0x44,0x84,0x0,0x88,0x42,0x0,};
+
+const byte Balles[] PROGMEM = {
+  8,4,0x40,0xA0,0xA0,0xE0,};
+
+
 #define ANGLE_ROT 0.05
-#define MAX_VELOCITY 2
+#define MAX_VELOCITY 4
 
 void updatePlayer()
 {
-  if(gb.buttons.repeat(BTN_RIGHT, 1))
+  if(player.hp>0)
   {
-    player.angleSprite = min(player.angleSprite+ANGLE_ROT, 0.6);
-    player.vx = min(player.vx + 0.18, MAX_VELOCITY);
-  }
-  if(gb.buttons.repeat(BTN_LEFT, 1))
-  {
-    player.angleSprite = max( player.angleSprite - ANGLE_ROT, -0.60);
-    player.vx = max(player.vx - 0.18, -MAX_VELOCITY);
-  }
-  if(gb.buttons.repeat(BTN_UP, 1))
-  {
-    player.vy = max(player.vy - 0.15, -MAX_VELOCITY);
-  }
-  if(gb.buttons.repeat(BTN_DOWN, 1))
-  {
-    player.vy = min(player.vy + 0.2, MAX_VELOCITY);
-  }
-  if(gb.buttons.repeat(BTN_A, 1))
-  {
-    player.mitraille = true;
-  }
-  else
-  {
-    player.mitraille = false;
-  }
-
-
-
-  if(player.vx > 0.5 && player.etat<3)
-  {
-    player.etat += 0.05;
-  }
-  else if(player.vx < -0.5 && player.etat>0)
-  {
-    player.etat -= 0.05;
-  }
-
-  //frottement inertie
-  player.angleSprite *= 0.9;
-  player.vx *= 0.95;
-  player.vy *= 0.97;
-
-  player.x = player.x + player.vx;
-  player.y = player.y + player.vy;
-
-  if(player.y >43)
-  {
-    if(abs(player.vy) > 0.5)
+    if(gb.buttons.repeat(BTN_RIGHT, 1))
     {
-      player.y = player.y - player.vy;
-      // si on vas trop vite on se crache
-      player.vy = -0.2 * player.vy;//on inverse et on ralentie
+      player.angleSprite = min(player.angleSprite+ANGLE_ROT, 0.6);
+      player.vx = min(player.vx + 0.18, MAX_VELOCITY);
+      player.vy = max(player.vy - 0.05, -MAX_VELOCITY);
+      ;
+    }
+    if(gb.buttons.repeat(BTN_LEFT, 1))
+    {
+      player.angleSprite = max( player.angleSprite - ANGLE_ROT, -0.60);
+      player.vx = max(player.vx - 0.18, -MAX_VELOCITY);
+      player.vy = max(player.vy - 0.05, -MAX_VELOCITY);
+    }
+    if(gb.buttons.repeat(BTN_UP, 1))
+    {
+      player.vy = max(player.vy - 0.15, -MAX_VELOCITY);
+    }
+    if(gb.buttons.repeat(BTN_DOWN, 1))
+    {
+      player.vy = min(player.vy + 0.2, MAX_VELOCITY);
+    }
+    if(gb.buttons.repeat(BTN_A, 1))
+    {
+      player.mitraille = true;
     }
     else
     {
-      //sinon on se pose
-      player.y = 43;
+      player.mitraille = false;
+    }
+
+    if(gb.buttons.repeat(BTN_B, 1))
+    {
+      player.hp = 0;
+    }
+
+    if(player.vx > 0.5 && player.etat<3)
+    {
+      player.etat += 0.05;
+    }
+    else if(player.vx < -0.5 && player.etat>0)
+    {
+      player.etat -= 0.05;
+    }
+
+    //frottement inertie
+    player.angleSprite *= 0.9;
+    player.vx *= 0.95;
+    player.vy = min(player.vy + 0.05, MAX_VELOCITY);
+
+    player.x = player.x + player.vx;
+    player.y = player.y + player.vy;
+
+    if(player.y >42)
+    {
+      if(abs(player.vy) > 0.5)
+      {
+        player.y = player.y - player.vy;
+        // si on vas trop vite on se crache
+        player.vy = -0.2 * player.vy;//on inverse et on ralentie
+      }
+      else
+      {
+        //sinon on se pose
+        player.y = 42;
+        player.vy = 0;
+      }
+    }
+    if(player.y <10)
+    {
+      player.y = 10;
       player.vy = 0;
     }
   }
-  if(player.y <10)
+  else
   {
-    player.y = 10;
-    player.vy = 0;
+    if(player.y<42)
+    {
+      player.angleSprite += ANGLE_ROT*4;
+      player.vy = min(player.vy + 0.3, MAX_VELOCITY);
+      player.vx *= 0.96;
+      player.x = player.x + player.vx;
+      player.y = player.y + player.vy;
+    }
   }
 }
 
 void drawPlayer()
 {
-  gb.display.print(player.vx);
-  if(player.etat<0.5)
+  //gb.display.print((0.90 + player.angleSprite));
+  
+  gb.display.drawBitmap(0,0,Balles);
+  gb.display.drawRect(5,0,20,4);
+  
+  if(player.hp>0)
   {
-    drawBitmapAngle(42,player.y, HelicoGauche,player.angleSprite);
-    //drawMitraille(player.angleSprite);
+    if(player.etat<0.5)
+    {
+      drawBitmapAngle(42,player.y, HelicoGauche,  player.angleSprite);
+      drawMitraille((0.90 + player.angleSprite),-1);
+    }
+    else if(player.etat>2.5)
+    {
+      drawBitmapAngle(42,player.y, HelicoDroite,player.angleSprite);
+      drawMitraille(0.90 - player.angleSprite,1);
+    }
+    else
+    {
+      drawBitmapAngle(42,player.y, HelicoFace,player.angleSprite);
+      drawMitraille(0,1);
+    }
   }
-  else if(player.etat>2.5)
+  else if(player.y<42)
   {
-    drawBitmapAngle(42,player.y, HelicoDroite,player.angleSprite);
-   // drawMitraille(player.angleSprite);
+    drawBitmapAngle(42,player.y, HelicoExplode,player.angleSprite);
   }
   else
   {
-    drawBitmapAngle(42,player.y, HelicoFace,player.angleSprite);
-    //drawMitraille(90);
+    drawBitmapAngle(42,34, HelicoCrache,0);
   }
 }
 
-void drawMitraille(float angle)
+void drawMitraille(float angle,int8_t mult)
 {
   if(player.mitraille)
   {
-    int8_t taille = random(2,10);
-    int8_t newx = player.x + cos(angle)*taille;
-    int8_t newy = player.y + sin(angle)*taille;
-    gb.display.drawLine(player.x, player.y, newx, newy);
+    int hauteur = (48 - player.y);
+    int hypo = hauteur / cos(angle);
+    int dist = 38 + (sqrt(pow(hypo,2)-pow(hauteur,2))*mult);
+
+    for(int8_t i=-1;i<2;i++)
+    {
+      int8_t taille = random(1,6);
+      gb.display.drawLine(dist + (i*2), 46, dist + (i*2), 46 - taille);
+    }
   }
 }
 
@@ -128,5 +177,9 @@ void drawBitmapAngle(int8_t x, int8_t y, const uint8_t *bitmap,float angle) {
     }
   }
 }
+
+
+
+
 
 
