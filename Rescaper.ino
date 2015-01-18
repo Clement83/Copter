@@ -12,11 +12,11 @@ void drawRescaper()
     {
       if(gb.frameCount % 6 >2)
       {
-        gb.display.drawBitmap(lesRescape[i].x- (player.x-42),43,Man1);
+        gb.display.drawBitmap(lesRescape[i].x- (player.x-42),lesRescape[i].y,Man1);
       }
       else
       {
-        gb.display.drawBitmap(lesRescape[i].x- (player.x-42),42,Man2);
+        gb.display.drawBitmap(lesRescape[i].x- (player.x-42),lesRescape[i].y-1,Man2);
       }
     }
   }
@@ -31,6 +31,15 @@ void updateRescaper()
       if(player.vx<0.2 &&  player.y >40)
       {
         lesRescape[i].tx = random(player.x-5,player.x+5);
+        
+        if(player.nbClient<NB_MAX_RESC_IN_COPTER)
+        {
+          if(abs(lesRescape[i].x-player.x)<5)
+          {
+            player.nbClient++;
+            lesRescape[i].etat = 2;
+          }
+        }
       }
 
       if(lesRescape[i].tx == lesRescape[i].x)
@@ -42,8 +51,6 @@ void updateRescaper()
         lesRescape[i].x++;
       else
         lesRescape[i].x--;
-
-
     }
   }
 }
