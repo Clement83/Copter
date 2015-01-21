@@ -63,6 +63,7 @@ typedef struct {
   unsigned int posX;
   uint8_t height;
   byte const * sprite;
+  byte const * spriteDamage;
   int8_t life;
 }
 Batiment;
@@ -80,19 +81,19 @@ Missile lesMissiles[NB_MISSIBLE];
 
 #define NB_BAT_LVL 13
 Batiment lesBat[NB_BAT_LVL] = {
-           {0,1010,8,HeliPort,10},
-           {52,1200,10,jeep,10},
-           {50,1110,10,Halftrack,10},
-           {51,1150,8,Char1,10},
-           {50,1350,10,Char2,10},
-           {51,1410,8,Char1C,10},
-           {52,1500,10,jeep,10},
-           {50,1620,10,Halftrack2,10},
-           {51,1700,10,Halftrack1c,10},
-           {52,1800,10,jeep,10},
-           {50,1950,10,Char2C,10},
-           {51,2200,10,Halftrack2C,10},
-           {1,2250,8,HeliPort,10},
+           {0,1010,8,HeliPort,HeliPort,10},
+           {52,1200,10,jeep,jeep,10},
+           {50,1110,10,Halftrack,Halftrack1c,0},
+           {51,1150,8,Char1,Char1C,10},
+           {50,1350,10,Char2,Char2C,10},
+           {51,1410,8,Char1,Char1C,10},
+           {52,1500,10,jeep,jeep,10},
+           {50,1620,10,Halftrack2,Halftrack2C,10},
+           {51,1700,10,Halftrack,Halftrack1c,10},
+           {52,1800,10,jeep,jeep,10},
+           {50,1950,10,Char2,Char2C,10},
+           {51,2200,10,Halftrack2,Halftrack2C,10},
+           {1,2250,8,HeliPort,HeliPort,10},
          };
          
          
@@ -102,7 +103,7 @@ Copter player;
 
 //le fond 
 #define NB_FOND 8
-byte const * leFond[8] = {Ville1,Ville5,Ville3,Ville7,Ville2,Ville8,Ville6,Ville4};
+byte const * leFond[NB_FOND] = {Ville1,Ville5,Ville3,Ville7,Ville2,Ville8,Ville6,Ville4};
 
 void setup()
 {
@@ -180,9 +181,16 @@ void drawMissile()
   {
     if(lesMissiles[i].isAlive)
     {
-      int x = lesMissiles[i].x + cos(lesMissiles[i].angle)*V_MISSILE;
-      int y = lesMissiles[i].y + sin(lesMissiles[i].angle)*V_MISSILE;
-      gb.display.drawLine(lesMissiles[i].x,lesMissiles[i].y,x,y);
+
+      int dist  = lesMissiles[i].x - player.x;
+      if(abs(dist)>88)
+      {
+        continue;
+      }
+
+      //int x = lesMissiles[i].x + cos(lesMissiles[i].angle)*V_MISSILE;
+      //int y = lesMissiles[i].y + sin(lesMissiles[i].angle)*V_MISSILE;
+      gb.display.fillCircle(dist,lesMissiles[i].y,1);
     }
   }
 }
@@ -206,17 +214,16 @@ void updateBatiment()
         }
       }
     }
-    else if(lesBat[i].type>49 && abs((player.x+50) -lesBat[i].posX)<60)//Batiment d'attaque
+    else if(lesBat[i].type>49 && lesBat[i].life>0 && abs(player.x -lesBat[i].posX)<88)//Batiment d'attaque
     {
-      for(byte i=0;i<NB_MISSIBLE;i++)
+      for(byte x=0;x<NB_MISSIBLE;x++)
       {
-        if(!lesMissiles[i].isAlive)
+        if(!lesMissiles[x].isAlive)
         {
-          lesMissiles[i].angle = 4;//((float)random(40, 60))/10;
-          lesMissiles[i].x = lesBat[i].posX +50;
-          lesMissiles[i].y = (48-lesBat[i].height);
-          lesMissiles[i].isAlive = true;
-          //Serial.print(lesMissiles[i].angle);
+          lesMissiles[x].angle = 4;//((float)random(40, 60))/10;
+          lesMissiles[x].x = lesBat[i].posX+10 ;
+          lesMissiles[x].y = (48-lesBat[i].height);
+          lesMissiles[x].isAlive = true;
           break;
         }
       }
@@ -250,7 +257,7 @@ void drawWorld()
      }
      else 
      {
-       gb.display.drawBitmap(dist,(48-lesBat[i].height),lesBat[i].sprite);
+       gb.display.drawBitmap(dist,(48-lesBat[i].height),lesBat[i].life>0 ? lesBat[i].sprite : lesBat[i].spriteDamage);
      }
    }
    
