@@ -12,11 +12,11 @@ void drawRescaper()
     {
       if(gb.frameCount % 6 >2)
       {
-        gb.display.drawBitmap(lesRescape[i].x- (player.x-42),lesRescape[i].y,Man1);
+        gb.display.drawBitmap(lesRescape[i].x- (player.x-player.offsetCam),lesRescape[i].y,Man1);
       }
       else
       {
-        gb.display.drawBitmap(lesRescape[i].x- (player.x-42),lesRescape[i].y-1,Man2);
+        gb.display.drawBitmap(lesRescape[i].x- (player.x-player.offsetCam),lesRescape[i].y-1,Man2);
       }
     }
   }
@@ -26,31 +26,44 @@ void updateRescaper()
 {
   for(uint8_t i =0;i<NB_RESC;i++)
   {
-    if(lesRescape[i].etat>2 &&  abs(lesRescape[i].x - (player.x-42)) <100)
+    if(lesRescape[i].etat>2 &&  abs(lesRescape[i].x - (player.x-player.offsetCam)) <100)
     {
-      if(player.vx<0.2 &&  player.y >40)
+      
+      if(player.mitraille)
       {
-        lesRescape[i].tx = random(player.x-5,player.x+5);
-        
-        if(player.nbClient<NB_MAX_RESC_IN_COPTER)
+          uint8_t posX = lesRescape[i].x- (player.x-player.offsetCam);
+         if(player.impact>posX && player.impact<(posX+3))
+         {
+           cptDeath++;
+           lesRescape[i].etat = 0;
+         }
+      }
+      if(lesRescape[i].etat > 2 )
+      {
+        if(player.vx<0.2 &&  player.y >40)
         {
-          if(abs(lesRescape[i].x-player.x)<5)
+          lesRescape[i].tx = random(player.x-5,player.x+5);
+          
+          if(player.nbClient<NB_MAX_RESC_IN_COPTER)
           {
-            player.nbClient++;
-            lesRescape[i].etat = 2;
+            if(abs(lesRescape[i].x-player.x)<5)
+            {
+              player.nbClient++;
+              lesRescape[i].etat = 2;
+            }
           }
         }
+  
+        if(lesRescape[i].tx == lesRescape[i].x)
+        {
+          lesRescape[i].tx = random(lesRescape[i].x-10,lesRescape[i].x+10);
+          if(lesRescape[i].tx<100)lesRescape[i].tx = random(110,120);
+        }
+        if(lesRescape[i].tx>lesRescape[i].x)
+          lesRescape[i].x++;
+        else
+          lesRescape[i].x--;
       }
-
-      if(lesRescape[i].tx == lesRescape[i].x)
-      {
-        lesRescape[i].tx = random(lesRescape[i].x-10,lesRescape[i].x+10);
-        if(lesRescape[i].tx<100)lesRescape[i].tx = random(110,120);
-      }
-      if(lesRescape[i].tx>lesRescape[i].x)
-        lesRescape[i].x++;
-      else
-        lesRescape[i].x--;
     }
   }
 }
