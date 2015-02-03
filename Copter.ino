@@ -156,6 +156,9 @@ void loop(){
 
  if(gb.update())
  {
+    if(gb.buttons.pressed(BTN_C)){
+  goTitleScreen();
+    }
     updatePlayer();
     updateRescaper();
     updateBatiment();
