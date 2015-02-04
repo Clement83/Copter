@@ -55,13 +55,30 @@ void updatePlayer()
     {
       player.vy = min(player.vy + 0.2, MAX_VELOCITY);
     }
-    if(gb.buttons.repeat(BTN_A, 1))
+    if(!player.isEnrayer && gb.buttons.repeat(BTN_A, 1))
     {
       player.mitraille = true;
+      player.timeMitraille++;
+      if(player.timeMitraille>TIME_TO_ENRAYE)
+      {
+        player.timeMitraille = TIME_TO_ENRAYE;
+        player.isEnrayer = true;
+      }
     }
     else
     {
       player.mitraille = false;
+      if(player.timeMitraille>0 && (gb.frameCount%(3+player.isEnrayer)==0)) player.timeMitraille--;
+      else if(player.timeMitraille==0) player.isEnrayer = false; 
+    }
+    if(player.timeRegenere == 0 && player.hp<MAX_LIFE)
+    {
+      //CAL OF inside
+      if(gb.frameCount%3 == 0) player.hp++;
+    }
+    else if(player.timeRegenere>0)
+    {
+      player.timeRegenere--;
     }
 
     if(gb.buttons.pressed(BTN_B))
@@ -169,7 +186,7 @@ void updatePlayer()
        if(gb.buttons.pressed(BTN_B))
         {
           player.angleSprite = 0;
-          player.hp = 1;
+          player.hp = MAX_LIFE;
         }
     }
   }

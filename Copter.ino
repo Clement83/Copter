@@ -40,6 +40,7 @@ const byte Explosion2[] PROGMEM = {16,24,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0
 const byte Explosion3[] PROGMEM = {16,24,0x3,0xC0,0x5,0xA0,0x1B,0xD8,0x27,0xE4,0x4F,0xF2,0xDD,0xBB,0xB9,0x9D,0xB7,0xED,0xCB,0xD3,0x73,0xCE,0x3,0xC0,0x3,0xC0,0x3,0xC0,0x3,0xC0,0x3,0xC0,0x3,0xC3,0x83,0xC2,0x43,0xC6,0x6B,0xD4,0x37,0xEC,0x21,0x84,0x73,0xCE,0x7D,0xBE,0xFC,0x3F,};
 
 #define NB_EXPLOSION_ENNEMI 3
+#define MAX_LIFE 10
 
 typedef struct {
   byte etat, frequence;
@@ -54,11 +55,13 @@ Explosion exEnn = {NB_EXPLOSION_ENNEMI+1,5,0,Explosion1, Explosion2, Explosion3}
 
 const byte Go[] PROGMEM = {24,17,0x0,0x1,0x0,0x0,0x1,0x80,0x0,0x1,0xC0,0x0,0x1,0xE0,0x0,0x1,0xF0,0xFF,0xFF,0xF8,0xFF,0xFF,0xFC,0xFF,0xFF,0xFE,0xFF,0xFF,0xFF,0xFF,0xFF,0xFE,0xFF,0xFF,0xFC,0xFF,0xFF,0xF8,0x0,0x1,0xF0,0x0,0x1,0xE0,0x0,0x1,0xC0,0x0,0x1,0x80,0x0,0x1,0x0,};
 
-
+#define FRAMERATE 41
+#define TIME_TO_REGENERE (FRAMERATE*2)
+#define TIME_TO_ENRAYE FRAMERATE
 typedef struct {
-  int8_t hp,nbClient,offsetCam;
+  int8_t hp,nbClient,offsetCam,timeMitraille,timeRegenere;
   float vx,vy,x, y,angle,angleSprite,etat; //etat < 1 : vise a droite; etat >1   vise au centre ; etat > 2 vise a gauche
-  bool dir, dirSprite,mitraille;
+  bool dir, dirSprite,mitraille,isEnrayer;
   int impact;
   
 }
@@ -101,37 +104,39 @@ Missile;
 #define NB_MISSIBLE 10
 Missile lesMissiles[NB_MISSIBLE];
 
-#define NB_BAT_LVL 29
+#define NB_BAT_LVL 31
 Batiment lesBat[NB_BAT_LVL] = {
+           {52,500,10,jeep,jeepC,127,2,MAX_LIFE},// ennemie anti bug de l'integer negatif ;)
            {0,1010,8,HeliPort,HeliPort,10,0,0},
-           {52,1200,10,jeep,jeepC,1,5,1},
-           {50,1110,10,Halftrack,Halftrack1c,7,10,2},
-           {51,1150,8,Char1,Char1C,15,15,2},
-           {50,1350,10,Char2,Char2C,20,20,2},
-           {51,1410,8,Char1,Char1C,15,15,2},
-           {52,1500,10,jeep,jeepC,1,5,1},
-           {50,1620,10,Halftrack2,Halftrack1c,7,10,2},
-           {51,1700,10,Halftrack,Halftrack1c,7,10,2},
-           {52,1800,10,jeep,jeepC,1,5,1},
-           {50,1950,10,Char2,Char2C,40,10,2},
-           {51,2200,10,Halftrack2,Halftrack1c,7,10,2},
-           {51,2315,10,Halftrack2,Halftrack1c,7,10,2},
-           {50,2450,10,Halftrack,Halftrack1c,7,10,2},
-           {51,2575,8,Char1,Char1C,15,15,2},
-           {50,2800,10,Char2,Char2C,20,20,2},
-           {51,2968,8,Char1,Char1C,15,15,2},
-           {52,3150,10,jeep,jeepC,1,5,1},
-           {50,3170,10,Halftrack2,Halftrack1c,7,10,2},
-           {51,3312,10,Halftrack,Halftrack1c,7,10,2},
-           {52,3350,10,jeep,jeepC,1,5,1},
-           {50,3470,10,Char2,Char2C,40,10,2},
-           {51,3550,10,Halftrack2,Halftrack1c,7,10,2},
-           {51,3675,8,Char1,Char1C,15,15,2},
-           {50,3750,10,Char2,Char2C,20,20,2},
-           {51,3968,8,Char1,Char1C,15,15,2},
-           {50,4150,10,Halftrack2,Halftrack1c,7,10,2},
-           {51,4200,10,Halftrack,Halftrack1c,7,10,2},
+           {52,1200,10,jeep,jeepC,1,5,2},
+           {50,1110,10,Halftrack,Halftrack1c,7,10,3},
+           {51,1150,8,Char1,Char1C,15,15,6},
+           {50,1350,10,Char2,Char2C,20,20,7},
+           {51,1410,8,Char1,Char1C,15,15,6},
+           {52,1500,10,jeep,jeepC,1,5,2},
+           {50,1620,10,Halftrack2,Halftrack2C,7,10,3},
+           {51,1700,10,Halftrack,Halftrack1c,7,10,4},
+           {52,1800,10,jeep,jeepC,1,5,2},
+           {50,1950,10,Char2,Char2C,40,10,7},
+           {51,2200,10,Halftrack2,Halftrack2C,7,10,4},
+           {51,2315,10,Halftrack2,Halftrack2C,7,10,4},
+           {50,2450,10,Halftrack,Halftrack1c,7,10,3},
+           {51,2575,8,Char1,Char1C,15,15,6},
+           {50,2800,10,Char2,Char2C,20,20,7},
+           {51,2968,8,Char1,Char1C,15,15,6},
+           {52,3150,10,jeep,jeepC,1,5,2},
+           {50,3170,10,Halftrack2,Halftrack2C,7,10,4},
+           {51,3312,10,Halftrack,Halftrack1c,7,10,3},
+           {52,3350,10,jeep,jeepC,1,5,2},
+           {50,3470,10,Char2,Char2C,40,10,7},
+           {51,3550,10,Halftrack2,Halftrack2C,7,10,4},
+           {51,3675,8,Char1,Char1C,15,15,6},
+           {50,3750,10,Char2,Char2C,20,20,7},
+           {51,3968,8,Char1,Char1C,15,15,6},
+           {50,4150,10,Halftrack2,Halftrack2C,7,10,4},
+           {51,4200,10,Halftrack,Halftrack1c,7,10,3},
            {0,4250,8,HeliPort,HeliPort,10,0,0},
+           {52,6000,10,jeep,jeepC,127,2,MAX_LIFE}// ennemie anti bug de l'integer negatif ;)
          };
          
          
@@ -148,7 +153,7 @@ void setup()
   gb.begin();
   goTitleScreen();
   gb.battery.show = false;
-  gb.setFrameRate(41);
+  gb.setFrameRate(FRAMERATE);
 }
 
 
@@ -157,7 +162,7 @@ void loop(){
  if(gb.update())
  {
     if(gb.buttons.pressed(BTN_C)){
-  goTitleScreen();
+      goTitleScreen();
     }
     updatePlayer();
     updateRescaper();
@@ -172,10 +177,9 @@ void loop(){
  }
  // gameOverScreen();
 }
-
 void initGame()
 {
-  player.hp = 1;
+  player.hp = MAX_LIFE;
   player.x=1000;
   cptVictoire= 0;
   player.etat=3;
@@ -218,7 +222,10 @@ void updateMissile()
       else if(gb.collidePointRect(lesMissiles[i].x,lesMissiles[i].y,player.x+(player.offsetCam - 11),player.y,22,8))
       {
         if(player.hp>0)
+        {
           player.hp -= lesMissiles[i].damage;
+          player.timeRegenere = TIME_TO_REGENERE;
+        }
         lesMissiles[i].isAlive = false;
       }
     }
@@ -361,6 +368,23 @@ void drawWorld()
    gb.display.print(" \41");
    gb.display.print(cptDeath);
    gb.display.setFont(font3x5);
+   
+   gb.display.drawRect(36,0,12,3);
+   gb.display.drawFastHLine(37,1,getLifeHud());
+   
+   gb.display.drawRect(50,0,12,3);
+   gb.display.drawFastHLine(51,1,getLifeMittraille());
+}
+
+uint8_t getLifeHud()
+{
+  float add = (player.hp * 10) / MAX_LIFE; 
+  return add;
+}
+uint8_t getLifeMittraille()
+{
+  float add = (player.timeMitraille * 10) / TIME_TO_ENRAYE; 
+  return add;
 }
 
 
