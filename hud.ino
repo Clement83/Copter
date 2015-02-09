@@ -5,6 +5,7 @@ const byte Go[] PROGMEM = {24,17,0x0,0x1,0x0,0x0,0x1,0x80,0x0,0x1,0xC0,0x0,0x1,0
 
 void drawHud()
 {
+    //return;
    if(player.x<800)
    {
      if(gb.frameCount%20<15)
@@ -21,20 +22,18 @@ void drawHud()
    gb.display.print(cptDeath);
    gb.display.setFont(font3x5);
    
-   gb.display.drawRect(36,0,12,3);
-   gb.display.drawFastHLine(37,1,getLifeHud());
+   gb.display.drawRect(40,0,12,3);
+   gb.display.drawFastHLine(41,1,getLifeHud());
    
-   gb.display.drawRect(50,0,12,3);
-   gb.display.drawFastHLine(51,1,getLifeMittraille());
+   gb.display.drawRect(54,0,12,3);
+   gb.display.drawFastHLine(55,1,getLifeMittraille());
 }
 
 uint8_t getLifeHud()
 {
-  float add = (player.hp * 10) / MAX_LIFE; 
-  return add;
+  return (player.hp * 10) / MAX_LIFE;
 }
 uint8_t getLifeMittraille()
 {
-  float add = (player.timeMitraille * 10) / TIME_TO_ENRAYE; 
-  return add;
+  return (player.timeMitraille * 10) / TIME_TO_ENRAYE;
 }

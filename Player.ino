@@ -29,23 +29,56 @@ const byte Balles[] PROGMEM = {
 
 #define ANGLE_ROT 0.05
 #define MAX_VELOCITY 4
+#define DOUBLE_CLIC 10 
+
+int8_t timeToReclclic = 0;
 
 void updatePlayer()
 {
+  if(timeToReclclic>0)
+  {
+    timeToReclclic--;
+  }
+  
   if(player.hp>0)
   {
+    
+    if(gb.buttons.pressed(BTN_RIGHT))
+    {
+      if(timeToReclclic> 0)
+      {
+        //Action double clic
+        player.etat += 1.5;
+        timeToReclclic = 0;
+      }
+      else
+        timeToReclclic = DOUBLE_CLIC;
+    }
+    
+    if(gb.buttons.pressed(BTN_LEFT))
+    {
+      if(timeToReclclic> 0)
+      {
+        //Action double clic
+        player.etat -= 1.5;
+        timeToReclclic = 0;
+      }
+      else
+        timeToReclclic = DOUBLE_CLIC;
+    }
+    
     if(gb.buttons.repeat(BTN_RIGHT, 1))
     {
       player.angleSprite = min(player.angleSprite+ANGLE_ROT, 0.6);
       player.vx = min(player.vx + 0.18, MAX_VELOCITY);
       player.vy = max(player.vy - 0.05, -MAX_VELOCITY);
-      ;
     }
     if(gb.buttons.repeat(BTN_LEFT, 1))
     {
       player.angleSprite = max( player.angleSprite - ANGLE_ROT, -0.60);
       player.vx = max(player.vx - 0.18, -MAX_VELOCITY);
       player.vy = max(player.vy - 0.05, -MAX_VELOCITY);
+      
     }
     if(gb.buttons.repeat(BTN_UP, 1))
     {
@@ -86,11 +119,11 @@ void updatePlayer()
       player.hp = 0;
     }
 
-    if(player.vx > 0.5 && player.etat<3)
+    if((player.vx > 0.5 && player.etat<3) || player.etat<-0.1)
     {
       player.etat += 0.05;
     }
-    else if(player.vx < -0.5 && player.etat>0)
+    else if((player.vx < -0.5 && player.etat>0) || player.etat>3.1)
     {
       player.etat -= 0.05;
     }
@@ -195,7 +228,7 @@ void updatePlayer()
 
 void drawPlayer()
 {
-  //gb.display.print((0.90 + player.angleSprite));
+  //gb.display.print(player.etat);
   
   //gb.display.drawBitmap(0,0,Balles);
   //gb.display.drawRect(5,0,20,4);
