@@ -20,6 +20,9 @@ void updateMissile()
           player.timeRegenere = TIME_TO_REGENERE;
           if(player.angleSprite<0) player.angleSprite += 0.2;
           else player.angleSprite -= 0.2; 
+          
+          if(player.hp<0)
+            player.hp = 0;
         }
         lesMissiles[i].isAlive = false;
       }

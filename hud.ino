@@ -14,11 +14,11 @@ void drawHud()
      }
    }
    gb.display.setFont(font3x3);
-   gb.display.print("\37");
+   gb.display.print(F("\37"));
    gb.display.print(player.nbClient);
-   gb.display.print(" \2");
+   gb.display.print(F(" \2"));
    gb.display.print(cptVictoire);
-   gb.display.print(" \41");
+   gb.display.print(F(" \41"));
    gb.display.print(cptDeath);
    gb.display.setFont(font3x5);
    
@@ -27,6 +27,12 @@ void drawHud()
    
    gb.display.drawRect(54,0,12,3);
    gb.display.drawFastHLine(55,1,getLifeMittraille());
+   
+   for(byte i=0;i<=vieRestant;i++)
+   {
+     gb.display.cursorX = 80 - (i*4);
+     gb.display.print(F(" \03"));
+   }
 }
 
 uint8_t getLifeHud()

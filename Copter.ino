@@ -74,6 +74,8 @@ Rescape;
 Rescape lesRescape[NB_RESC];
 uint8_t cptVictoire;
 uint8_t cptDeath;
+#define NB_LIFE 2
+uint8_t vieRestant = NB_LIFE;
 
 typedef struct {
   uint8_t type;//permet de savoir sur quel sprite on est 0 : heliport,   1 -> 49 bat deco , >49 bat attaque
@@ -101,42 +103,39 @@ Missile lesMissiles[NB_MISSIBLE];
 
 #define NB_BAT_LVL 31
 Batiment lesBat[NB_BAT_LVL] = {
-           {52,500,48,10,jeep,jeepC,127,2,MAX_LIFE},// ennemie anti bug de l'integer negatif ;)
+           {60,500,48,10,jeep,jeepC,127,2,MAX_LIFE},// ennemie anti bug de l'integer negatif ;)
            {0,1010,48,8,HeliPort,HeliPort,10,0,0},
-           {52,1200,70,10,jeep,jeepC,1,5,2},
-           {50,1110,80,10,Halftrack,Halftrack1c,7,10,3},
-           {51,1150,60,8,Char1,Char1C,15,15,6},
-           {50,1350,70,10,Char2,Char2C,20,20,7},
-           {51,1410,90,8,Char1,Char1C,15,15,6},
-           {52,1500,80,10,jeep,jeepC,1,5,2},
-           {50,1620,60,10,Halftrack2,Halftrack2C,7,10,3},
-           {51,1700,70,10,Halftrack,Halftrack1c,7,10,4},
-           {52,1800,60,10,jeep,jeepC,1,5,2},
-           {50,1950,90,10,Char2,Char2C,40,10,7},
-           {51,2200,60,10,Halftrack2,Halftrack2C,7,10,4},
-           {51,2315,120,10,Halftrack2,Halftrack2C,7,10,4},
-           {50,2450,60,10,Halftrack,Halftrack1c,7,10,3},
-           {51,2575,90,8,Char1,Char1C,15,15,6},
-           {50,2650,80,10,Char2,Char2C,20,20,7},
-           {51,2780,70,8,Char1,Char1C,15,15,6},
-           {52,2800,120,10,jeep,jeepC,1,5,2},
-           {50,2850,80,10,Halftrack2,Halftrack2C,7,10,4},
-           {51,2880,55,10,Halftrack,Halftrack1c,7,10,3},
-           {52,2900,75,10,jeep,jeepC,1,5,2},
-           {50,2960,60,10,Char2,Char2C,40,10,7},
-           {51,3000,65,10,Halftrack2,Halftrack2C,7,10,4},
-           {51,3075,85,8,Char1,Char1C,15,15,6},
-           {50,3150,90,10,Char2,Char2C,20,20,7},
-           {51,3100,70,8,Char1,Char1C,15,15,6},
-           {50,3180,60,10,Halftrack2,Halftrack2C,7,10,4},
-           {51,3200,100,10,Halftrack,Halftrack1c,7,10,3},
+           {50,1200,70,10,jeep,jeepC,5,5,2},
+           {51,1110,80,10,Halftrack,Halftrack1c,15,10,3},
+           {53,1150,60,8,Char1,Char1C,25,15,6},
+           {54,1350,70,10,Char2,Char2C,35,20,7},
+           {53,1410,90,8,Char1,Char1C,25,15,6},
+           {50,1500,80,10,jeep,jeepC,5,5,2},
+           {52,1620,60,10,Halftrack2,Halftrack2C,15,10,3},
+           {51,1700,70,10,Halftrack,Halftrack1c,15,10,4},
+           {50,1800,60,10,jeep,jeepC,5,5,2},
+           {54,1950,90,10,Char2,Char2C,40,10,7},
+           {52,2200,60,10,Halftrack2,Halftrack2C,15,10,4},
+           {52,2315,120,10,Halftrack2,Halftrack2C,15,10,4},
+           {51,2450,60,10,Halftrack,Halftrack1c,15,10,3},
+           {53,2575,90,8,Char1,Char1C,25,15,6},
+           {54,2650,80,10,Char2,Char2C,35,20,7},
+           {53,2780,70,8,Char1,Char1C,25,15,6},
+           {50,2800,120,10,jeep,jeepC,5,5,2},
+           {52,2850,80,10,Halftrack2,Halftrack2C,15,10,4},
+           {51,2880,55,10,Halftrack,Halftrack1c,15,10,3},
+           {50,2900,75,10,jeep,jeepC,5,5,2},
+           {54,2960,60,10,Char2,Char2C,40,10,7},
+           {52,3000,65,10,Halftrack2,Halftrack2C,15,10,4},
+           {53,3075,85,8,Char1,Char1C,25,15,6},
+           {54,3150,90,10,Char2,Char2C,35,20,7},
+           {53,3100,70,8,Char1,Char1C,25,15,6},
+           {52,3180,60,10,Halftrack2,Halftrack2C,15,10,4},
+           {51,3200,100,10,Halftrack,Halftrack1c,15,10,3},
            {0,3250,48,8,HeliPort,HeliPort,10,0,0},
-           {52,6000,48,10,jeep,jeepC,127,2,MAX_LIFE}// ennemie anti bug de l'integer negatif ;)
+           {60,6000,48,10,jeep,jeepC,127,2,MAX_LIFE}// ennemie anti bug de l'integer negatif ;)
          };
          
-         
-
-
 Copter player;
 
 //le fond 
@@ -147,38 +146,42 @@ void setup()
 {
   gb.begin();
   goTitleScreen();
-  gb.battery.show = false;
   gb.setFrameRate(FRAMERATE);
 }
 
-
-void loop(){
-
- if(gb.update())
- {
-    if(gb.buttons.pressed(BTN_C)){
-      goTitleScreen();
-    }
-    updatePlayer();
-    updateRescaper();
-    updateBatiment();
-    updateMissile();
-    updateExplosion();
-    drawWorld();
-    drawMissile();
-    drawEnnemies();
-    drawPlayer();
-    drawRescaper();
-    drawExplosion();
-    drawHud();
- }
- // gameOverScreen();
-}
 void initGame()
 {
-  player.hp = MAX_LIFE;
+  gb.battery.show = false;
+   for(byte i=0;i<NB_BAT_LVL;i++)
+   {
+     switch (lesBat[i].type)
+     {
+       case 50 : 
+       lesBat[i].life = 5;
+       break;
+       case 51 : 
+       lesBat[i].life = 15;
+       break;
+       case 52 : 
+       lesBat[i].life = 15;
+       break;
+       case 53 : 
+       lesBat[i].life = 25;
+       break;
+       case 54 : 
+       lesBat[i].life = 35;
+       break;
+       default : 
+       lesBat[i].life = 127;
+       
+       break;
+     }
+   }
+   vieRestant = 2;
+   player.hp = MAX_LIFE;
   player.x=1000;
   cptVictoire= 0;
+  cptDeath = 0;
   player.etat=3;
   player.offsetCam = 42;
   
@@ -196,6 +199,35 @@ void initGame()
   }
 }
 
+void loop(){
+
+ if(gb.update())
+ {
+    if(gb.buttons.pressed(BTN_C)){
+      goTitleScreen();
+    }
+    if((cptVictoire + cptDeath)< NB_RESC && vieRestant>0) 
+    {
+      updatePlayer();
+      updateRescaper();
+      updateBatiment();
+      updateMissile();
+      updateExplosion();
+      drawWorld();
+      drawMissile();
+      drawEnnemies();
+      drawPlayer();
+      drawRescaper();
+      drawExplosion();
+      drawHud();
+    }
+    else 
+    {
+      winScreen();
+    }
+ }
+ // gameOverScreen();
+}
 
 void drawWorld()
 {
@@ -211,8 +243,6 @@ void drawWorld()
      }
    }
    gb.display.drawFastHLine(0, 39, 84);
-   
-   
 }
 
 

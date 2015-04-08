@@ -27,17 +27,6 @@ void updateBatiment()
       {
         lesBat[i].posY--;
       }
-      /*if(abs(player.x - lesBat[i].posX)>20)
-      {
-        if(player.x > lesBat[i].posX)
-        {
-          lesBat[i].posX++;
-        }
-        else 
-        {
-          lesBat[i].posX--;
-        }
-      }*/
       
       if(player.mitraille)
       {
