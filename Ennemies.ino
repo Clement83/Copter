@@ -37,6 +37,7 @@ void updateBatiment()
          }
          if(lesBat[i].life<=0)
          {
+           playsoundfx(0,0);
            exEnn.etat = 0;
            exEnn.posX = lesBat[i].posX;
          }

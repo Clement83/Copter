@@ -82,6 +82,7 @@ void updatePlayer()
     }
     if(!player.isEnrayer && gb.buttons.repeat(BTN_A, 1))
     {
+      playsoundfx(1,0);
       player.mitraille = true;
       player.timeMitraille++;
       if(player.timeMitraille>TIME_TO_ENRAYE)

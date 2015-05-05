@@ -48,6 +48,7 @@ void updateRescaper()
           {
             if(abs(lesRescape[i].x-player.x)<5)
             {
+              playsoundfx(2,0);
               player.nbClient++;
               lesRescape[i].etat = 2;
             }

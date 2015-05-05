@@ -233,17 +233,36 @@ void drawWorld()
 {
   
    //test gris => pas concluant 
-   if(gb.frameCount%2==0)
+   gb.display.setColor(GRAY);
+   for(int i=0;i<3;i++)
    {
-     for(int i=0;i<3;i++)
-     {
-       uint8_t index = ((((int)player.x/42)%8)+i)%8;
-       int indexImageX = (42*i)-((int)player.x%42);
-       gb.display.drawBitmap( indexImageX,0,leFond[index]);
-     }
+     uint8_t index = ((((int)player.x/42)%8)+i)%8;
+     int indexImageX = (42*i)-((int)player.x%42);
+     gb.display.drawBitmap( indexImageX,0,leFond[index]);
    }
+   
+   gb.display.setColor(BLACK);
    gb.display.drawFastHLine(0, 39, 84);
 }
 
 
+
+const uint8_t soundfx[3][8] = {
+    {1,4,113,10,7,19,7,52}, // Explosion{1,0,55,12,7,12,7,13}
+    {1,36,12,1,7,0,7,10}, // Mittrailleuse {1,14,24,7,7,0,7,10}
+    {0,25,1,1,7,0,7,9},
+};
+
+void playsoundfx(uint8_t fxno, uint8_t channel) {
+    gb.sound.command(0,soundfx[fxno][6],0,channel);
+    // set volume
+    gb.sound.command(1,soundfx[fxno][0],0,channel);
+    // set waveform
+    gb.sound.command(2,soundfx[fxno][5],-soundfx[fxno][4],channel);
+    // set volume slide
+    gb.sound.command(3,soundfx[fxno][3],soundfx[fxno][2]-58,channel);
+    // set pitch slide
+    gb.sound.playNote(soundfx[fxno][1],soundfx[fxno][7],channel);
+    // play note
+}
 
