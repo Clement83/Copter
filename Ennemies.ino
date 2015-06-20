@@ -47,12 +47,28 @@ void updateBatiment()
       {
         for(byte x=0;x<NB_MISSIBLE;x++)
         {
-          if(!lesMissiles[x].isAlive)
+          if(lesMissiles[x].timerAlive == 0)
           {
-            lesMissiles[x].angle = ((float)random(30, 60)/10);
+            lesMissiles[x].vy = -((float)random(0, V_MISSILE10))/100.0;
+            lesMissiles[x].vx = V_MISSILE + lesMissiles[x].vy;
+/*            Serial.print(lesMissiles[x].vy);
+            Serial.print(" <= vy | vx => ");
+            Serial.println(lesMissiles[x].vx);*/
+            
+            if(gb.frameCount%2 == 0){
+              lesMissiles[x].vx = -lesMissiles[x].vx;
+            }
             lesMissiles[x].x = lesBat[i].posX+10 ;
             lesMissiles[x].y = (48-lesBat[i].height);
-            lesMissiles[x].isAlive = true;
+
+            if(lesBat[i].type == 53 || lesBat[i].type == 54) {
+              lesMissiles[x].timerAlive = TIME_ALIVE_BOULET;
+              lesMissiles[x].isGravity = 1;
+           } else {
+              lesMissiles[x].timerAlive = TIME_ALIVE_MITRAILLE;
+              lesMissiles[x].isGravity = 0;
+           }
+
             lesMissiles[x].damage = lesBat[i].damage;
             break;
           }

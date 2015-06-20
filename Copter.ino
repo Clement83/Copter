@@ -69,7 +69,7 @@ typedef struct {
 }
 Rescape;
 
-#define NB_RESC 50
+#define NB_RESC 33
 #define NB_MAX_RESC_IN_COPTER 8
 Rescape lesRescape[NB_RESC];
 uint8_t cptVictoire;
@@ -89,15 +89,18 @@ typedef struct {
 }
 Batiment;
 
+#define GRAVITE 0.015
+#define TIME_ALIVE_BOULET 120
+#define TIME_ALIVE_MITRAILLE 60
 
 typedef struct {
-  bool isAlive;
-  int8_t damage;
-  int x,y;
-  float angle; 
+  int8_t timerAlive;
+  int8_t damage,isGravity;
+  float x,y, vx,vy; 
 }
 Missile;
-#define V_MISSILE 2
+#define V_MISSILE10 100
+#define V_MISSILE 1
 #define NB_MISSIBLE 10
 Missile lesMissiles[NB_MISSIBLE];
 
@@ -195,7 +198,7 @@ void initGame()
   }
   for(byte i=0;i<NB_MISSIBLE;i++)
   {
-    lesMissiles[i].isAlive = false;
+    lesMissiles[i].timerAlive = 0;
   }
 }
 
@@ -231,8 +234,6 @@ void loop(){
 
 void drawWorld()
 {
-  
-   //test gris => pas concluant 
    gb.display.setColor(GRAY);
    for(int i=0;i<3;i++)
    {
