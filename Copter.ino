@@ -89,7 +89,7 @@ typedef struct {
 }
 Batiment;
 
-#define GRAVITE 0.015
+#define GRAVITE 0.025
 #define TIME_ALIVE_BOULET 120
 #define TIME_ALIVE_MITRAILLE 60
 
@@ -99,8 +99,8 @@ typedef struct {
   float x,y, vx,vy; 
 }
 Missile;
-#define V_MISSILE10 100
-#define V_MISSILE 1
+#define V_MISSILE10 200
+#define V_MISSILE 2
 #define NB_MISSIBLE 10
 Missile lesMissiles[NB_MISSIBLE];
 
@@ -117,7 +117,7 @@ Batiment lesBat[NB_BAT_LVL] = {
            {52,1620,60,10,Halftrack2,Halftrack2C,15,10,3},
            {51,1700,70,10,Halftrack,Halftrack1c,15,10,4},
            {50,1800,60,10,jeep,jeepC,5,5,2},
-           {54,1950,90,10,Char2,Char2C,40,10,7},
+           {54,1950,90,10,Char2,Char2C,40,20,7},
            {52,2200,60,10,Halftrack2,Halftrack2C,15,10,4},
            {52,2315,120,10,Halftrack2,Halftrack2C,15,10,4},
            {51,2450,60,10,Halftrack,Halftrack1c,15,10,3},
@@ -128,7 +128,7 @@ Batiment lesBat[NB_BAT_LVL] = {
            {52,2850,80,10,Halftrack2,Halftrack2C,15,10,4},
            {51,2880,55,10,Halftrack,Halftrack1c,15,10,3},
            {50,2900,75,10,jeep,jeepC,5,5,2},
-           {54,2960,60,10,Char2,Char2C,40,10,7},
+           {54,2960,60,10,Char2,Char2C,40,20,7},
            {52,3000,65,10,Halftrack2,Halftrack2C,15,10,4},
            {53,3075,85,8,Char1,Char1C,25,15,6},
            {54,3150,90,10,Char2,Char2C,35,20,7},

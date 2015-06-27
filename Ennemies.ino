@@ -20,9 +20,8 @@ void updateBatiment()
         }
       }
     }
-    else if(lesBat[i].type>49 && lesBat[i].life>0 && abs(player.x -lesBat[i].posX)<88)//Batiment d'attaque
+    else if(lesBat[i].type>49 && lesBat[i].life>0 && abs((player.x+player.offsetCam) -lesBat[i].posX)<88)//Batiment d'attaque
     {
-      
       if(lesBat[i].posY>48 && (gb.frameCount%5) == 0)
       {
         lesBat[i].posY--;
@@ -41,6 +40,13 @@ void updateBatiment()
            exEnn.etat = 0;
            exEnn.posX = lesBat[i].posX;
          }
+      }
+      if(lesBat[i].type == 50 && abs((player.x+player.offsetCam) -lesBat[i].posX)>15 && gb.frameCount%3 == 0){
+        if((player.x+player.offsetCam) >lesBat[i].posX){
+          lesBat[i].posX++;
+        } else {
+          lesBat[i].posX--;
+        } 
       }
       
       if(lesBat[i].posY<52 && (gb.frameCount%lesBat[i].cadance) == 0)

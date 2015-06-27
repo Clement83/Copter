@@ -186,7 +186,8 @@ void updatePlayer()
   }
   else//si plus de vie
   {
-    if(cptCrash<=0)
+   player.mitraille = false;
+   if(cptCrash<=0)
    {
      cptCrash = TEMP_CRASH;
    }  
